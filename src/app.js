@@ -2,6 +2,7 @@
 
 const express = require('express')
 const routerIndex = require('./routes/routerIndex')
+const routerUser = require('./routes/routerUser')
 const Multer = require('multer')
 const path = require('path')
 const crypto = require('crypto')
@@ -30,5 +31,6 @@ app.use(Multer({
 }).single('file0'))
 
 app.use('/api',routerIndex)
+app.use('/api',routerUser)
 
 module.exports = app

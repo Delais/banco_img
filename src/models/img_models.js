@@ -7,7 +7,7 @@ const img = sequelize.define('Table_img',{
     id:{
         type: DataTypes.INTEGER,
         allowNull: false,
-        autoIncrement:false,
+        autoIncrement:true,
         primaryKey: true
     },
     name:{
