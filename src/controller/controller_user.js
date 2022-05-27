@@ -2,11 +2,11 @@
 
 const Model_user = require('../models/user_model')
 const bcrypt = require('bcryptjs')
-const generateToken = require('../config/token.config')
-2
+const {generateToken} = require('../config/token.config')
+
 
 const Controller_user = {
-    new: async(req,res) =>{
+    sign_up: async(req,res) =>{
         const {id, name, lastname, email,user_name ,password} = req.body
 
         try {
@@ -53,6 +53,57 @@ const Controller_user = {
 
         } catch (error) {
             console.error(error)
+        }
+    },
+
+    sign_in: async(req, res) => {
+        try {
+            const {email, password} = req.body
+
+            const Userfound = await Model_user.findOne(
+                {
+                    where: {
+                        email
+                    }
+                }
+            )
+
+            if (!Userfound){
+                return res.status(404).json({
+                    msg: 'El Usuario o Contraseña Incorrecta',
+                    status: 'Fallido'
+                })
+            }
+
+            const is_password = bcrypt.compareSync(password, Userfound.password)
+
+            if(!is_password){
+                return res.status(404).json({
+                    msg: 'El Usuario o Contraseña Incorrecta',
+                    status: 'Fallido'
+                })
+            }
+
+            const Token = generateToken({
+                id: Userfound.id,
+                name: Userfound.name,
+                email: Userfound.email,
+                user_name: Userfound.user_name
+            }, '2h')
+
+            return res.status(200).json({
+                msg: 'Usuario Y Password correctos',
+                status: 'Suscess',
+                Token
+            })
+
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json({
+                msg: 'Error interno del servidor',
+                status: 'Error',
+                error
+            })
         }
     }
 }
